@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -24,13 +25,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<Authorities> getUserAuthorities(String user, String password) {
+    public Optional<List<Authorities>> getUserAuthorities(String user, String password) {
         if(auth(user, password))
-            return users.get(user).getAuthorities();
-        return null;
+            return Optional.of(users.get(user).getAuthorities());
+        return Optional.empty();
     }
 
     public boolean auth(String user, String password) {
+        if(!users.containsKey(user))
+            return false;
         return password.equals(users.get(user).getPassword());
     }
 }

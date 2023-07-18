@@ -1,15 +1,18 @@
 package com.example.spring_validation_and_advice.app.service.impl;
 
-import com.example.spring_validation_and_advice.app.exceptions.InvalidCredentials;
 import com.example.spring_validation_and_advice.app.exceptions.UnauthorizedUser;
 import com.example.spring_validation_and_advice.app.repository.UserRepository;
 import com.example.spring_validation_and_advice.app.service.AuthorizationService;
 import com.example.spring_validation_and_advice.web.dto.Authorities;
+import jakarta.validation.constraints.NotBlank;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
+@Log
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
     UserRepository userRepository;
@@ -20,21 +23,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     public List<Authorities> getAuthorities(String user, String password) {
-        if (isEmpty(user) || isEmpty(password)) {
-            throw new InvalidCredentials("User name or password is empty");
-        }
-        List<Authorities> userAuthorities = userRepository.getUserAuthorities(user, password);
-        if (isEmpty(userAuthorities)) {
+        log.info("getAuthorities("+ user+", "+password+")");
+        return userRepository.getUserAuthorities(user, password).orElseThrow(()->{
+            log.info("error authorization user="+user);
             throw new UnauthorizedUser("Unknown user " + user);
-        }
-        return userAuthorities;
-    }
-
-    private boolean isEmpty(String str) {
-        return str == null || str.isEmpty();
-    }
-
-    private boolean isEmpty(List<?> str) {
-        return str == null || str.isEmpty();
+        });
     }
 }

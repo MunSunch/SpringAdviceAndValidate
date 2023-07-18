@@ -1,30 +1,35 @@
 package com.example.spring_validation_and_advice.web.controllers;
 
+import com.example.spring_validation_and_advice.app.model.User;
 import com.example.spring_validation_and_advice.app.service.AuthorizationService;
-
+import com.example.spring_validation_and_advice.web.controllers.validate.EmptyUser;
 import com.example.spring_validation_and_advice.web.dto.Authorities;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Log
+@Validated
 @RestController
 public class AuthorizationController {
-    AuthorizationService service;
+    private final AuthorizationService service;
 
     @Autowired
     public AuthorizationController(AuthorizationService service) {
         this.service = service;
     }
 
-    @GetMapping("/authorize")
-    public List<Authorities> getAuthorities(@RequestParam("user") String user,
-                                            @RequestParam("password") String password)
-    {
-        return service.getAuthorities(user, password);
+    @PostMapping("/authorize")
+    public List<Authorities> getAuthorities(@RequestBody @EmptyUser User user) {
+        log.info("GET /authorize user="+user.getLogin());
+        return service.getAuthorities(user.getLogin(), user.getPassword());
     }
 }
