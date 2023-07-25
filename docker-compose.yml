@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./
+    container_name: "munsun.app"
+    ports:
+      - "8080"

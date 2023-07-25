@@ -28,7 +28,7 @@ public class AuthorizationController {
     }
 
     @PostMapping("/authorize")
-    public List<Authorities> getAuthorities(@RequestBody @EmptyUser User user) {
+    public List<Authorities> getAuthorities(@RequestBody @Valid User user) {
         log.info("GET /authorize user="+user.getLogin());
         return service.getAuthorities(user.getLogin(), user.getPassword());
     }
